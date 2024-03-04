@@ -1,0 +1,120 @@
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+// Function to authenticate user credentials
+bool authenticateUser(string username, string password) {
+    // Hardcoded customer credentials
+    string correctUsername = "jsmith";
+    string correctPassword = "blue123";
+    
+    // Check if provided username and password match correct credentials
+    if (username == correctUsername && password == correctPassword) {
+        return true; // Authentication successful
+    } else {
+        return false; // Authentication failed
+    }
+}
+
+// Function to process the purchase
+void processPurchase(double& storeCredit, double pricePerUnit, int quantity) {
+    double totalPrice = pricePerUnit * quantity; // Calculate total price
+    
+    // Check if customer has enough store credit to make the purchase
+    if (totalPrice > storeCredit) {
+        cout << "Insufficient store credit. Please choose a smaller quantity or remove items from cart." << endl;
+        return;
+    }
+    
+    // Calculate sales tax (6%)
+    double salesTax = totalPrice * 0.06;
+    
+    // Check if quantity is available in stock
+    if (quantity > 0) {
+        // Update store credit
+        storeCredit -= totalPrice + salesTax;
+        
+        // Display receipt
+        cout << "----- Receipt -----" << endl;
+        cout << "Price per unit: $" << fixed << setprecision(2) << pricePerUnit << endl;
+        cout << "Quantity: " << quantity << endl;
+        cout << "Total Price: $" << totalPrice << endl;
+        cout << "Sales Tax (6%): $" << salesTax << endl;
+        cout << "-------------------" << endl;
+        cout << "Updated Store Credit: $" << storeCredit << endl;
+    } else {
+        cout << "Invalid quantity. Please choose a quantity greater than 0." << endl;
+    }
+}
+
+int main() {
+    // Hardcoded customer details
+    string username = "jsmith";
+    string password = "blue123";
+    double storeCredit = 3000.00;
+    
+    // Product information
+    string sku[] = {"HF-342", "LK-322", "KF-231"};
+    string name[] = {"½ in Bolt", "¼ in Nail", "Hammer"};
+    int itemsInUnit[] = {50, 25, 1};
+    double pricePerUnit[] = {20.00, 5.75, 15.23};
+    int quantityOnHand[] = {200, 76, 100};
+    
+    // Display product information
+    cout << "Available Products:" << endl;
+    cout << "SKU\tName\t\t\tItems in Unit\tPrice per Unit\tQuantity on Hand" << endl;
+    for (int i = 0; i < 3; i++) {
+        cout << sku[i] << "\t" << name[i] << "\t\t" << itemsInUnit[i] << "\t\t$" << fixed << setprecision(2) << pricePerUnit[i] << "\t\t" << quantityOnHand[i] << endl;
+    }
+    
+    // Authenticate user
+    cout << "Please enter your username: ";
+    cin >> username;
+    cout << "Please enter your password: ";
+    cin >> password;
+    
+    if (!authenticateUser(username, password)) {
+        cout << "Authentication failed. Exiting program." << endl;
+        return 0;
+    }
+    
+    // User authenticated successfully
+    cout << "Authentication successful." << endl;
+    
+    // Purchase process
+    string chosenSku;
+    int chosenQuantity;
+    
+    cout << "Enter the SKU of the item you wish to purchase: ";
+    cin >> chosenSku;
+    
+    cout << "Enter the quantity you wish to purchase: ";
+    cin >> chosenQuantity;
+    
+    // Find index of chosen SKU
+    int index = -1;
+    for (int i = 0; i < 3; i++) {
+        if (sku[i] == chosenSku) {
+            index = i;
+            break;
+        }
+    }
+    
+    // Check if SKU is valid
+    if (index == -1) {
+        cout << "Invalid SKU. Please enter a valid SKU." << endl;
+        return 0;
+    }
+    
+    // Check if quantity is available in stock
+    if (chosenQuantity > quantityOnHand[index]) {
+        cout << "Insufficient quantity in stock. Please choose a smaller quantity." << endl;
+        return 0;
+    }
+    
+    // Process the purchase
+    processPurchase(storeCredit, pricePerUnit[index], chosenQuantity);
+    
+    return 0;
+}
